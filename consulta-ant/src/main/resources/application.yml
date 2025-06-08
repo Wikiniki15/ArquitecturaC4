@@ -5,10 +5,6 @@ spring:
   application:
     name: consulta-ant
 
-  data:
-    redis:
-      url: rediss://default:AY4WAAIjcDE1NDIxZGQ3NWMwNTY0ZTFjOGYwNDdkM2Q2NzZmMjVkNHAxMA@proper-ray-36374.upstash.io
-
 logging:
   level:
     org.springframework.web: INFO

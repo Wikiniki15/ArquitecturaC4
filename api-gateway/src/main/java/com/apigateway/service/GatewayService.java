@@ -4,42 +4,38 @@ import com.apigateway.dto.RespuestaDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+/* GatewayService que usa programación reactiva con Mono */
 @Service
 @RequiredArgsConstructor
 public class GatewayService {
 
     private final WebClient.Builder webClientBuilder;
 
-    public RespuestaDTO obtenerInformacion(String cedula, String placa) {
-        // Llamada al microservicio de SRI
-        RespuestaDTO.DatosSRI sri = webClientBuilder.build()
-                .get()
+    public Mono<RespuestaDTO> obtenerInformacion(String cedula, String placa) {
+        WebClient webClient = webClientBuilder.build();
+
+        Mono<RespuestaDTO.DatosSRI> sriMono = webClient.get()
                 .uri("http://localhost:8081/sri/contribuyente/{ruc}", cedula)
                 .retrieve()
-                .bodyToMono(RespuestaDTO.DatosSRI.class)
-                .block();
+                .bodyToMono(RespuestaDTO.DatosSRI.class);
 
-        // Llamada al microservicio de Vehículo
-        RespuestaDTO.DatosVehiculo vehiculo = webClientBuilder.build()
-                .get()
+        Mono<RespuestaDTO.DatosVehiculo> vehiculoMono = webClient.get()
                 .uri("http://localhost:8082/vehiculo/{placa}", placa)
                 .retrieve()
-                .bodyToMono(RespuestaDTO.DatosVehiculo.class)
-                .block();
+                .bodyToMono(RespuestaDTO.DatosVehiculo.class);
 
-        // Llamada al microservicio de ANT
-        RespuestaDTO.DatosLicencia licencia = webClientBuilder.build()
-                .get()
+        Mono<RespuestaDTO.DatosLicencia> licenciaMono = webClient.get()
                 .uri("http://localhost:8083/ant/puntos?cedula={cedula}&placa={placa}", cedula, placa)
                 .retrieve()
-                .bodyToMono(RespuestaDTO.DatosLicencia.class)
-                .block();
+                .bodyToMono(RespuestaDTO.DatosLicencia.class);
 
-        return RespuestaDTO.builder()
-                .datosSRI(sri)
-                .datosVehiculo(vehiculo)
-                .datosLicencia(licencia)
-                .build();
+        return Mono.zip(sriMono, vehiculoMono, licenciaMono)
+                .map(tuple -> RespuestaDTO.builder()
+                        .datosSRI(tuple.getT1())
+                        .datosVehiculo(tuple.getT2())
+                        .datosLicencia(tuple.getT3())
+                        .build());
     }
 }

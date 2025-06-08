@@ -15,8 +15,8 @@ public class AntController {
 
     @GetMapping("/puntos")
     public ResponseEntity<DatosLicenciaDTO> consultarPuntosLicencia(
-            @RequestParam String cedula,
-            @RequestParam String placa) {
+            @RequestParam(name = "cedula") String cedula,
+            @RequestParam(name = "placa") String placa) {
         return ResponseEntity.ok(antService.obtenerPuntosLicencia(cedula, placa));
     }
 }
