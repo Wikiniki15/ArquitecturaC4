@@ -1,0 +1,28 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    redis:
+      url: rediss://default:AY4WAAIjcDE1NDIxZGQ3NWMwNTY0ZTFjOGYwNDdkM2Q2NzZmMjVkNHAxMA@proper-ray-36374.upstash.io
+
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5175"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
