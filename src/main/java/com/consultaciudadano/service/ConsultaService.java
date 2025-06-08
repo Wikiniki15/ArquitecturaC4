@@ -12,10 +12,17 @@ public class ConsultaService {
     @Cacheable("verificarContribuyente")
     public Map<String, Object> verificarContribuyente(String ruc) {
         Map<String, Object> datos = new HashMap<>();
-        datos.put("ruc", ruc);
-        datos.put("contribuyente", true);
-        datos.put("nombre", "Juan Pérez");
-        datos.put("tipo", "Persona Natural");
+        try {
+            // Aquí va tu lógica real de llamada al SRI (por ejemplo usando WebClient o Jsoup)
+
+            // Simulación de datos válidos
+            datos.put("ruc", ruc);
+            datos.put("contribuyente", true);
+            datos.put("nombre", "Juan Pérez");
+            datos.put("tipo", "Persona Natural");
+        } catch (Exception e) {
+            datos.put("error", "No se pudo consultar el SRI: " + e.getMessage());
+        }
         return datos;
     }
 
