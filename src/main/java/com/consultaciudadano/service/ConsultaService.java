@@ -1,18 +1,15 @@
 package com.consultaciudadano.service;
 
-import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.reactive.function.client.WebClient;
-import java.util.Map;
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class ConsultaService {
 
-    private final WebClient webClient = WebClient.create();
-
+    @Cacheable("verificarContribuyente")
     public Map<String, Object> verificarContribuyente(String ruc) {
         Map<String, Object> datos = new HashMap<>();
         datos.put("ruc", ruc);
@@ -22,6 +19,7 @@ public class ConsultaService {
         return datos;
     }
 
+    @Cacheable("consultarVehiculo")
     public Map<String, Object> consultarVehiculo(String placa) {
         Map<String, Object> datos = new HashMap<>();
         datos.put("placa", placa);
@@ -31,13 +29,12 @@ public class ConsultaService {
         return datos;
     }
 
-    @Cacheable(value = "puntosLicencia", key = "#cedula")
+    @Cacheable("consultarPuntosLicencia")
     public Map<String, Object> consultarPuntosLicencia(String cedula, String placa) {
         Map<String, Object> datos = new HashMap<>();
+        datos.put("puntos", 24);
         datos.put("cedula", cedula);
         datos.put("placa", placa);
-        datos.put("puntos", 24);
-        datos.put("estado", "VIGENTE");
         return datos;
     }
 

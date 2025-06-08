@@ -1,12 +1,5 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: consulta-ciudadano
-  redis:
-    host: <tu-host-redis>
-    port: <tu-puerto>
-    password: <tu-password>
   cache:
     type: redis
