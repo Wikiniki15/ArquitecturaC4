@@ -6,22 +6,38 @@ export default function Resultados({ datos }) {
       <h2>Resultados</h2>
 
       <h3>Datos del SRI</h3>
-      <p><b>Nombre:</b> {datos.datosSRI?.nombre}</p>
+      <p><b>Nombre:</b> {datos.datosSRI?.razonSocial}</p>
       <p><b>Tipo Contribuyente:</b> {datos.datosSRI?.tipoContribuyente}</p>
-      <p><b>Estado:</b> {datos.datosSRI?.estado}</p>
-      <p><b>Actividad Económica:</b> {datos.datosSRI?.actividadEconomica}</p>
+      <p><b>Estado:</b> {datos.datosSRI?.estadoContribuyenteRuc}</p>
+      <p><b>Actividad Económica:</b> {datos.datosSRI?.actividadEconomicaPrincipal}</p>
+
+      {datos.informacionFechas?.fechaInicioActividades && (
+        <>
+          <h3>Fechas</h3>
+          <p><b>Inicio actividades:</b> {datos.informacionFechas.fechaInicioActividades}</p>
+        </>
+      )}
+
+      {datos.representanteLegal?.nombre && (
+        <>
+          <h3>Representante Legal</h3>
+          <p><b>Nombre:</b> {datos.representanteLegal.nombre}</p>
+        </>
+      )}
 
       <h3>Datos del Vehículo</h3>
-      <p><b>Placa:</b> {datos.datosVehiculo?.placa}</p>
-      <p><b>Marca:</b> {datos.datosVehiculo?.marca}</p>
-      <p><b>Modelo:</b> {datos.datosVehiculo?.modelo}</p>
-      <p><b>Año:</b> {datos.datosVehiculo?.anio}</p>
-      <p><b>Tipo:</b> {datos.datosVehiculo?.tipo}</p>
+      <p><b>Placa:</b> {datos.datosVehiculo?.numeroPlaca}</p>
+      <p><b>Marca:</b> {datos.datosVehiculo?.descripcionMarca}</p>
+      <p><b>Modelo:</b> {datos.datosVehiculo?.descripcionModelo}</p>
+      <p><b>Año:</b> {datos.datosVehiculo?.anioAuto}</p>
 
-      <h3>Puntos de Licencia</h3>
-      <p><b>Puntos:</b> {datos.datosLicencia?.puntos}</p>
-      <p><b>Estado de Licencia:</b> {datos.datosLicencia?.estadoLicencia}</p>
-      <p><b>Observaciones:</b> {datos.datosLicencia?.observaciones}</p>
+      <h3>Puntos de Licencia (ANT)</h3>
+      <p><b>Puntos:</b> {datos.datosANT?.puntos}</p>
+      <p><b>Estado de Licencia:</b> {datos.datosANT?.estadoLicencia}</p>
+
+      {datos.datosANT?.observaciones && (
+        <p><b>Observaciones:</b> {datos.datosANT.observaciones}</p>
+      )}
     </div>
   );
 }

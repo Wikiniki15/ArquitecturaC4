@@ -7,16 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/ant")
+@RequestMapping("/api/ant")
 @RequiredArgsConstructor
 public class AntController {
-
     private final AntService antService;
 
-    @GetMapping("/puntos")
-    public ResponseEntity<DatosLicenciaDTO> consultarPuntosLicencia(
-            @RequestParam(name = "cedula") String cedula,
-            @RequestParam(name = "placa") String placa) {
-        return ResponseEntity.ok(antService.obtenerPuntosLicencia(cedula, placa));
+    @GetMapping("/puntos/{cedula}")
+    public ResponseEntity<DatosLicenciaDTO> consultarPuntos(@PathVariable String cedula) {
+        DatosLicenciaDTO datos = antService.obtenerPuntosLicencia(cedula);
+        return ResponseEntity.ok(datos);
     }
 }

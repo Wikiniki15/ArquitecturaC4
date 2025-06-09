@@ -5,9 +5,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class DatosLicenciaDTO {
+    private String cedula;
     private int puntos;
-    private String estadoLicencia;
-    private String observaciones;
 }

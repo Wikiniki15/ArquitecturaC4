@@ -6,43 +6,29 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import java.io.IOException;
 
 @Service
 public class AntService {
 
-    @Cacheable(value = "puntosLicencia", key = "#cedula")
-    public DatosLicenciaDTO obtenerPuntosLicencia(String cedula, String placa) {
+    @Cacheable("licencia")
+    public DatosLicenciaDTO obtenerPuntosLicencia(String cedula) {
+        String url = "https://consultaweb.ant.gob.ec/PortalWEB/paginas/clientes/clp_grid_citaciones.jsp?ps_tipo_identificacion=CED&ps_identificacion=" + cedula + "&ps_placa=";
         try {
-            String url = "https://consultaweb.ant.gob.ec/PortalWEB/paginas/clientes/clp_grid_citaciones.jsp?ps_tipo_identificacion=CED&ps_identificacion="
-                    + cedula + "&ps_placa=" + placa;
-
             Document doc = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0")
-                    .timeout(10000)
+                    .timeout(10_000)
                     .get();
 
-            Elements tabla = doc.select("table");
-            if (!tabla.isEmpty()) {
-                // Aquí deberías parsear valores reales desde el HTML
-                return DatosLicenciaDTO.builder()
-                        .puntos(24)
-                        .estadoLicencia("ACTIVA")
-                        .observaciones("Sin observaciones")
-                        .build();
-            } else {
-                return DatosLicenciaDTO.builder()
-                        .puntos(0)
-                        .estadoLicencia("No disponible")
-                        .observaciones("No se encontraron datos")
-                        .build();
+            Elements elementos = doc.select("td:contains(PUNTOS)").next();
+            if (!elementos.isEmpty()) {
+                String puntosStr = elementos.first().text().trim();
+                int puntos = Integer.parseInt(puntosStr);
+                return new DatosLicenciaDTO(cedula, puntos);
             }
-
-        } catch (Exception e) {
-            return DatosLicenciaDTO.builder()
-                    .puntos(0)
-                    .estadoLicencia("ERROR")
-                    .observaciones("Error al consultar ANT: " + e.getMessage())
-                    .build();
+        } catch (IOException | NumberFormatException e) {
+            // log or handle error
         }
+        return new DatosLicenciaDTO(cedula, -1); // -1 indica error o no encontrado
     }
 }

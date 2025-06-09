@@ -16,8 +16,12 @@ public class GatewayController {
     private final GatewayService gatewayService;
 
     @GetMapping("/consulta")
-    public Mono<ResponseEntity<RespuestaDTO>> obtenerDatos(@RequestParam String cedula, @RequestParam String placa) {
-        return gatewayService.obtenerInformacion(cedula, placa)
-                .map(ResponseEntity::ok);
+    public ResponseEntity<RespuestaDTO> consultar(
+            @RequestParam String cedula,
+            @RequestParam String ruc,
+            @RequestParam String placa
+    ) {
+        RespuestaDTO respuesta = gatewayService.consultarTodo(cedula, ruc, placa);
+        return ResponseEntity.ok(respuesta);
     }
 }

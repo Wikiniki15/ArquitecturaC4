@@ -18,15 +18,10 @@
     </properties>
 
     <dependencies>
-        <!-- Spring Cloud Gateway (ya incluye webflux internamente) -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
-        </dependency>
-
+        <!-- Spring Boot Web (para usar RestTemplate y controladores MVC) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webflux</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <!-- Lombok -->
@@ -34,6 +29,23 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Dependencias DTOs -->
+        <dependency>
+            <groupId>com.consultaciudadano</groupId>
+            <artifactId>consulta-sri</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.consultaciudadano</groupId>
+            <artifactId>consulta-vehiculo</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.consultaciudadano</groupId>
+            <artifactId>consulta-ant</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

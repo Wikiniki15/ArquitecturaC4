@@ -1,41 +1,81 @@
 package com.apigateway.service;
 
 import com.apigateway.dto.RespuestaDTO;
+import com.consultaant.dto.DatosLicenciaDTO;
+import com.consultasri.dto.DatosSRI;
+import com.consultasri.dto.InformacionFechasContribuyente;
+import com.consultasri.dto.RepresentanteLegal;
+import com.consultavehiculo.dto.VehiculoDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
-/* GatewayService que usa programación reactiva con Mono */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GatewayService {
 
-    private final WebClient.Builder webClientBuilder;
+    private final RestTemplate restTemplate;
 
-    public Mono<RespuestaDTO> obtenerInformacion(String cedula, String placa) {
-        WebClient webClient = webClientBuilder.build();
+    @Value("${servicios.sri-url}")
+    private String sriUrl;
 
-        Mono<RespuestaDTO.DatosSRI> sriMono = webClient.get()
-                .uri("http://localhost:8081/sri/contribuyente/{ruc}", cedula)
-                .retrieve()
-                .bodyToMono(RespuestaDTO.DatosSRI.class);
+    @Value("${servicios.vehiculo-url}")
+    private String vehiculoUrl;
 
-        Mono<RespuestaDTO.DatosVehiculo> vehiculoMono = webClient.get()
-                .uri("http://localhost:8082/vehiculo/{placa}", placa)
-                .retrieve()
-                .bodyToMono(RespuestaDTO.DatosVehiculo.class);
+    @Value("${servicios.ant-url}")
+    private String antUrl;
 
-        Mono<RespuestaDTO.DatosLicencia> licenciaMono = webClient.get()
-                .uri("http://localhost:8083/ant/puntos?cedula={cedula}&placa={placa}", cedula, placa)
-                .retrieve()
-                .bodyToMono(RespuestaDTO.DatosLicencia.class);
+    public RespuestaDTO consultarTodo(String cedula, String ruc, String placa) {
 
-        return Mono.zip(sriMono, vehiculoMono, licenciaMono)
-                .map(tuple -> RespuestaDTO.builder()
-                        .datosSRI(tuple.getT1())
-                        .datosVehiculo(tuple.getT2())
-                        .datosLicencia(tuple.getT3())
-                        .build());
+        DatosSRI datosSRI = null;
+        InformacionFechasContribuyente informacionFechas = null;
+        RepresentanteLegal representanteLegal = null;
+        VehiculoDTO datosVehiculo = null;
+        DatosLicenciaDTO datosANT = null;
+
+        // Microservicio SRI
+        try {
+            datosSRI = restTemplate.getForObject(sriUrl + "/" + ruc, DatosSRI.class);
+        } catch (RestClientException e) {
+            log.warn("Error consultando DatosSRI para RUC {}: {}", ruc, e.getMessage());
+        }
+
+        try {
+            informacionFechas = restTemplate.getForObject(sriUrl + "/" + ruc + "/fechas", InformacionFechasContribuyente.class);
+        } catch (RestClientException e) {
+            log.warn("Error consultando InformacionFechasContribuyente para RUC {}: {}", ruc, e.getMessage());
+        }
+
+        try {
+            representanteLegal = restTemplate.getForObject(sriUrl + "/" + ruc + "/representante", RepresentanteLegal.class);
+        } catch (RestClientException e) {
+            log.warn("Error consultando RepresentanteLegal para RUC {}: {}", ruc, e.getMessage());
+        }
+
+        // Microservicio Vehículo
+        try {
+            datosVehiculo = restTemplate.getForObject(vehiculoUrl + "/" + placa, VehiculoDTO.class);
+        } catch (RestClientException e) {
+            log.warn("Error consultando VehiculoDTO para placa {}: {}", placa, e.getMessage());
+        }
+
+        // Microservicio ANT
+        try {
+            datosANT = restTemplate.getForObject(antUrl + "/" + cedula, DatosLicenciaDTO.class);
+        } catch (RestClientException e) {
+            log.warn("Error consultando DatosLicenciaDTO para cédula {}: {}", cedula, e.getMessage());
+        }
+
+        return RespuestaDTO.builder()
+                .datosSRI(datosSRI)
+                .informacionFechas(informacionFechas)
+                .representanteLegal(representanteLegal)
+                .datosVehiculo(datosVehiculo)
+                .datosANT(datosANT)
+                .build();
     }
 }
