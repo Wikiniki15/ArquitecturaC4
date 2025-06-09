@@ -1,6 +1,7 @@
 package com.consultasri.controller;
 
 import com.consultasri.dto.DatosSRI;
+import com.consultasri.dto.DatosSRICompletoDTO;
 import com.consultasri.service.SriService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,5 +23,10 @@ public class SriController {
         }
 
         return ResponseEntity.ok(datos);
+    }
+
+    @GetMapping("/contribuyente/completo/{ruc}")
+    public ResponseEntity<DatosSRICompletoDTO> obtenerDatosCompletos(@PathVariable String ruc) {
+        return ResponseEntity.ok(sriService.obtenerDatosCompletos(ruc));
     }
 }

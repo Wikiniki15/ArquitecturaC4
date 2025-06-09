@@ -5,9 +5,9 @@ import Resultados from "../components/Resultados";
 export default function HomePage() {
   const [resultado, setResultado] = useState(null);
 
-  const consultarDatos = async (cedula, placa) => {
+  const consultarDatos = async (cedula, ruc, placa) => {
     try {
-      const res = await fetch(`http://localhost:8080/api/consulta?cedula=${cedula}&placa=${placa}`);
+      const res = await fetch(`http://localhost:8080/api/consulta?cedula=${cedula}&ruc=${ruc}&placa=${placa}`);
       if (!res.ok) throw new Error("Error al consultar");
       const data = await res.json();
       setResultado(data);

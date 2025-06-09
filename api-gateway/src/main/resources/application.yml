@@ -6,23 +6,27 @@ spring:
     name: api-gateway
   main:
     allow-bean-definition-overriding: true
-  data:
-    redis:
-      url: rediss://default:AY4WAAIjcDE1NDIxZGQ3NWMwNTY0ZTFjOGYwNDdkM2Q2NzZmMjVkNHAxMA@proper-ray-36374.upstash.io
+  redis:
+    enabled: false
 
-  cloud:
-    gateway:
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins:
-              - "http://localhost:5175"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders:
-              - "*"
-            allowCredentials: true
+servicios:
+  sri-url: http://localhost:8081/api/sri/contribuyente
+  vehiculo-url: http://localhost:8082/api/vehiculo
+  ant-url: http://localhost:8083/api/ant/puntos
+
+cloud:
+  gateway:
+    globalcors:
+      corsConfigurations:
+        '[/**]':
+          allowedOrigins:
+            - "http://localhost:5175"
+          allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            - OPTIONS
+          allowedHeaders:
+            - "*"
+          allowCredentials: true
