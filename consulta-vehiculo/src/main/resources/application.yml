@@ -5,6 +5,9 @@ spring:
   application:
     name: consulta-vehiculo
 
+vehiculo:
+  api-url: "https://srienlinea.sri.gob.ec/sri-matriculacion-vehicular-recaudacion-servicio-internet/rest/BaseVehiculo/obtenerPorNumeroPlacaOPorNumeroCampvOPorNumeroCpn"
+
 logging:
   level:
     org.springframework.web: INFO
